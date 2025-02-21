@@ -4,12 +4,12 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import fs from 'fs';
 import https from 'https';
-import {recogniceQuestionsPathern} from "./questions_recognition";
+import {recognizeQuestionPattern} from "./questions_recognition";
 
 import {QueryResult} from "pg";
-import questionsResponser from "./questions_responser";
+import questionsReplies from "./questions_responser";
 import readNumber from "./read_number";
-import createPathern from "./create_pathern";
+import createPattern from "./create_pathern";
 
 const app = express();
 const Pool = require('pg').Pool;
@@ -17,7 +17,7 @@ const Pool = require('pg').Pool;
 dotenv.config();
 
 // Configuraciones
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT ?? 3000);
 app.set('json spaces', 2);
 
 // Middleware
@@ -41,11 +41,11 @@ app.get('/parkings/request', (request: Request, response: Response) => {
 
     const text = typeof request.query.text === 'string' ? request.query.text : '';
 
-    let pathern = createPathern(text);
-    let number: number = readNumber(text) ?? 0;
-    let question = recogniceQuestionsPathern(pathern);
+    let pattern = createPattern(text);
+    let number: number | null = readNumber(text);
+    let question = recognizeQuestionPattern(pattern);
 
-    let query = "";
+    let query;
     let parameter = [];
     switch (question) {
         case "cm1":
@@ -89,7 +89,7 @@ app.get('/parkings/request', (request: Request, response: Response) => {
             //{"text":"Server error"}
         }
         console.log(results.rows);
-        let responseJson = questionsResponser(question, number, results.rows);
+        let responseJson = questionsReplies(question, number, results.rows);
         console.log(responseJson);
         response.status(200).json(responseJson);
     });
@@ -119,9 +119,7 @@ async function testDatabaseConnection() {
 
 // Iniciar servidor HTTPS
 https.createServer(options, app).listen(app.get('port'), () => {
-    console.log(`Server listening on port ${app.get('port')} (HTTP)`);
-    testDatabaseConnection();
+    console.log(`Server listening on port ${app.get('port')} (HTTPS)`);
+    testDatabaseConnection().then();
 });
-//app.listen(app.get('port'),()=>{
-//    console.log(`Server listening on port ${app.get('port')}`);
-//});
+
