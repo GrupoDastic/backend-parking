@@ -27,7 +27,7 @@ export default function readNumber(inputString: string) {
         inputString = inputString.replaceAll("siete", "7");
         inputString = inputString.replaceAll("ocho", "8");
         inputString = inputString.replaceAll("nueve", "9");
-        inputString = inputString.replaceAll("dies", "10");
+        inputString = inputString.replaceAll("diez", "10");
 
         inputString = inputString.replace(/[^0-9]+/g, "");
         if (inputString !== "") return Number(inputString);

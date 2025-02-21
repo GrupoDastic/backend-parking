@@ -1,6 +1,4 @@
-export type SymbolsType = {
-    [key: string]: string[];
-}
+export type SymbolsType = Record<string, string[]>;
 
 export type Parking = {
     id_zona: number;

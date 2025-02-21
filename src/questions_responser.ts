@@ -3,7 +3,7 @@
  */
 import {Parking} from "./types";
 
-export default function questionsResponser(commandCode: string, parameter: number, data: Parking[]) {
+export default function questionsReplies(commandCode: string, parameter: number | null, data: Parking[]) {
     let result = "";
     let zones: number[] = [];
     switch (commandCode) {
@@ -12,7 +12,7 @@ export default function questionsResponser(commandCode: string, parameter: numbe
             let parkingsFree = data;
             if (parkingsFree.length > 0) {
                 parkingsFree.forEach(parking => {
-                    if ((zones.indexOf(parking.id_zona) < 0) && (zones.length <= 5)) {
+                    if ((zones.indexOf(parking.id_zona) < 0) && (zones.length <= 3)) {
                         zones.push(parking.id_zona);
                         result += "En la zona " + parking.id_zona + " está disponible el parqueadero " + parking.id_parqueadero + ". ";
                     }
@@ -63,6 +63,7 @@ export default function questionsResponser(commandCode: string, parameter: numbe
             if (freeOnZone.length === 1) {
                 result = "En la zona " + parameter + " está disponible el parqueadero " + freeOnZone[0].id_parqueadero + ".";
             } else if (freeOnZone.length > 1) {
+                if (freeOnZone.length > 5) freeOnZone = freeOnZone.slice(0, 3);
                 const parkingsId = freeOnZone.map(({id_parqueadero}) => (id_parqueadero));
                 result = "En la zona " + parameter + " están disponibles: el parqueadero " + parkingsId.join(", parqueadero ");
             } else {
