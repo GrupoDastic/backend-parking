@@ -35,9 +35,9 @@ const SYMBOLS: SymbolsType = {
 }
 
 /**
- * Busca numeros y textos que representen a numeros.
- * @param {*} inputString - El texto de entrada donde se deben buscar numeros.
- * @returns - Devuelve
+ * Search for numbers and texts that represent numbers and return them as Integer.
+ * @param {*} inputString - The input text where numbers should be searched.
+ * @returns - Returns the number found as an integer or null if there is none.
  */
 function detectNumbers(inputString: string): boolean {
     if (inputString === undefined) return false;
@@ -60,27 +60,34 @@ function detectNumbers(inputString: string): boolean {
 }
 
 /**
- * Recibe una cadena de texto y devuelve los un pathern de symbolos que la representa.
- * @param {*} inputString - Cadena de texto con una instruccion del usuario.
- * @returns - Pathern de symbolos que representa a la cadena de entrada.
+ * Create a pattern of symbols that represents the input string.
+ * @param {*} inputString - The input string to be analyzed.
+ * @returns - Returns an array of symbols that represent the input string.
  */
-export default function createPathern(inputString: string): string[] {
-    let pathern = [];
+export default function createPattern(inputString: string): string[] {
+    let pattern: string[] = [];
     try {
-        if (detectNumbers(inputString))
-            pathern.push("number");
-        const testSubString = ((subString: string) => natural.LevenshteinDistance(subString, inputString) > 1);
+        if (detectNumbers(inputString)) {
+            pattern.push("number");
+        }
+
+        const tokenizer = new natural.WordTokenizer();
+        let tokens: string[] = tokenizer.tokenize(inputString.toLowerCase()) ?? [];
+
         Object.keys(SYMBOLS).forEach(key => {
-            if (SYMBOLS[key].every(testSubString)) {
-                return;
+            if (SYMBOLS[key].some(symbol =>
+                tokens.some(word => natural.LevenshteinDistance(symbol, word) <= 1)
+            )) {
+                pattern.push(key);
             }
-            pathern.push(key);
         });
+
     } catch (error) {
-        console.log('Error en la funcion principal del módulo "create_pathern.js"')
+        console.error('Error en createPattern:', error);
+        console.log('Error en la función principal del módulo "create_pattern.js"')
         console.log('No se pudo crear un patron para el string de entrada.')
     }
-    return pathern;
+    return pattern;
 };
 
 
