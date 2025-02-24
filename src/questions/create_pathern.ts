@@ -8,7 +8,7 @@
  */
 
 import natural from 'natural';
-import {SymbolsType} from "./types";
+import {SymbolsType} from "../types";
 
 const SYMBOLS: SymbolsType = {
     "status": [
@@ -48,7 +48,7 @@ function detectNumbers(inputString: string): boolean {
         let tokens: string[] = tokenizer.tokenize(inputString) ?? [];
 
         const testToken = (token: string) => {
-            if (token.search(/[0-9]+/) >= 0) return false;
+            if (token.search(/\d+/) >= 0) return false;
             if (ordinals.indexOf(token) >= 0) return false;
             return numbers.indexOf(token) < 0;
         }

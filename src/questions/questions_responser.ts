@@ -1,7 +1,7 @@
 /**
  * Segun el comando, devuelve los datos solicitados en una cadena de texto de respuesta.
  */
-import {Parking} from "./types";
+import {Parking} from "../types";
 
 export default function questionsReplies(commandCode: string, parameter: number | null, data: Parking[]) {
     let result = "";
@@ -39,7 +39,7 @@ export default function questionsReplies(commandCode: string, parameter: number 
             break;
 
         case "cm3":     // Repite la ultima informacion.
-            //Este comando aún no se va a implementar.
+
             break;
 
         // Disponibilidad de un parqueadero especifico.
