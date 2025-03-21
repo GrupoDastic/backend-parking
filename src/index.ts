@@ -22,15 +22,15 @@ app.use(cors(corsConfig));
 app.use("/parkings", parkingRoutes);
 
 // Opciones de configuración HTTPS
-// const options = {
-//     key: fs.readFileSync('/etc/letsencrypt/live/dastic.brazilsouth.cloudapp.azure.com/privkey.pem'),
-//     cert: fs.readFileSync('/etc/letsencrypt/live/dastic.brazilsouth.cloudapp.azure.com/fullchain.pem')
-// };
-
 const options = {
-    key: fs.readFileSync('./src/certificados/clave-privada.key'),
-    cert: fs.readFileSync('./src/certificados/certificado-firmado.crt')
+    key: fs.readFileSync('/etc/letsencrypt/live/dastic.brazilsouth.cloudapp.azure.com/privkey.pem'),
+    cert: fs.readFileSync('/etc/letsencrypt/live/dastic.brazilsouth.cloudapp.azure.com/fullchain.pem')
 };
+
+// const options = {
+//     key: fs.readFileSync('./src/certificados/clave-privada.key'),
+//     cert: fs.readFileSync('./src/certificados/certificado-firmado.crt')
+// };
 
 
 // Iniciar servidor HTTPS
