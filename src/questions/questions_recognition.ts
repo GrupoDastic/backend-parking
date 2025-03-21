@@ -14,6 +14,7 @@ export const recognizeQuestionPattern = (inputPatternArray: string[]) => {
     const hasZone = inputPatternArray.includes("zone");
     const hasReference = inputPatternArray.includes("reference");
     const hasParking = inputPatternArray.includes("parking");
+    const hasStrips = inputPatternArray.includes("strips");
     const hasHello = inputPatternArray.includes("hello");
     const hasHelp = inputPatternArray.includes("help");
 
@@ -21,7 +22,7 @@ export const recognizeQuestionPattern = (inputPatternArray: string[]) => {
         if (hasZone) return "cm2";        // Lista de las zonas con parqueo disponible.
         if (hasParking) return "cm1";     // Disponibilidad de parqueaderos en cualquier zona.
         if (hasHello) return "cm7";       // Saluda al usuario y ofrece servicios.
-        if (hasHelp) return "cm8";        // Menú de servicios.
+        if (hasHelp) return "cm8";// Menú de servicios.
         return "cm9";                     // Pide al usuario que repita el comando.
     }
 

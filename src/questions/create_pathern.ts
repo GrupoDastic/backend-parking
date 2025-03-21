@@ -26,6 +26,7 @@ const SYMBOLS: SymbolsType = {
         "donde", "lugar", "pertenece", "esta", "encuentra", "encontre",  //palabra truncada: encuentra, ubica
         "ubico", "ubica", "indicame", "indica", "dime"
     ],
+    "strips": ["franja", "linea"],
     "repeat": ["repite", "repita", "no entendi", "no entiendo", "repeat"],
     "hello": ["Hola", "Buenos dias", "Buenas tardes", "Buen dia"],
     "help": [
