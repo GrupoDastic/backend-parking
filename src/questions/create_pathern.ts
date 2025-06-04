@@ -1,81 +1,44 @@
-/**
- * Los simbolos son marcadores que sirven para reconocer una frase.
- * Se representan con palabras o conjuntos de palabras que expresan objeto, cualidad o una accion.
- * Ejemplo: la accion de parquear es un simbolo que se representa por las palabras "parquear", "estacionar".
- * En el presente codigo se definen algunos simbolos y las palabras que los representan.
- * Se establece una funcion para crear un cadena pathern de simbolos que represente a la cadena original.
- * En esta libreria, los simbolos se representan en el texto mediante una palabra en ingles.
- */
+import natural from "natural";
+import { SymbolsType } from "../types";
 
-import natural from 'natural';
-import {SymbolsType} from "../types";
-
+// 🔹 Se agregan nombres de zonas, franjas y sus identificadores
 const SYMBOLS: SymbolsType = {
-    "status": [
-        "disponible", "disponibilidad", "desocupado", "libre", "vacio", "asequible", "tomado",
-        "cogido", "ocupado", "tomado", "utilizado", "lleno", "llena", "espacio", "free"
-    ],
-    "parking": [
-        "parqueo", "parqueadero", "parquear", "aparcar", "aparcarse", "parque",
-        "estacionamiento", "estacionar", "estacionarme", "aparcamiento",
-        "aparcamiento", "aparcadero", "lugar", "lugares", "parking"
-    ],
-    "zone": ["zona", "zonas", "area", "areas"],
-    "will": ["necesito", "quiero", "puede", "puedo", "posible", "dame"],
-    "reference": [
-        "donde", "lugar", "pertenece", "esta", "encuentra", "encontre",  //palabra truncada: encuentra, ubica
-        "ubico", "ubica", "indicame", "indica", "dime"
-    ],
-    "strips": ["franja", "linea"],
+    "status": ["disponible", "libre", "ocupado", "lleno", "vacio", "asequible", "espacio"],
+    "parking": ["parqueo", "parqueadero", "estacionamiento", "aparcamiento", "lugar"],
+    "zone": ["zona", "zonas", "área", "áreas", "bloque", "bloques"],
+    "strips": ["franja", "franjas", "línea", "carril", "sección"],
+    "will": ["necesito", "quiero", "puede", "puedo", "dame"],
+    "reference": ["donde", "pertenece", "ubicado", "encuentra"],
     "repeat": ["repite", "repita", "no entendi", "no entiendo", "repeat"],
-    "hello": ["Hola", "Buenos dias", "Buenas tardes", "Buen dia"],
-    "help": [
-        "Ayuda", "Necesito ayuda", "Que debo hacer", "Que hago", "Informacion",
-        "Info", "Que haces", "Ayudame", "Menu"
+    "hello": ["hola", "buenos días", "buenas tardes"],
+    "help": ["ayuda", "información", "menú"],
+    "zone_name": [
+        "secretaría", "capilla", "cafetería", "computación", "laboratorios",
+    ],
+    "zone_identifier": [
+        "B", "H", "G", "D", "C"
+    ],
+    "strip_identifier": [
+        "1", "2", "3", "4", "5"
     ]
-}
+};
 
 /**
- * Search for numbers and texts that represent numbers and return them as Integer.
- * @param {*} inputString - The input text where numbers should be searched.
- * @returns - Returns the number found as an integer or null if there is none.
- */
-function detectNumbers(inputString: string): boolean {
-    if (inputString === undefined) return false;
-    try {
-        const ordinals = ["primero", "segundo", "tercero", "cuarto", "quinto", "sexto", "séptimo", "octavo", "noveno", "décimo"];
-        const numbers = ["uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve", "dies"];
-        const tokenizer = new natural.WordTokenizer();
-        let tokens: string[] = tokenizer.tokenize(inputString) ?? [];
-
-        const testToken = (token: string) => {
-            if (token.search(/\d+/) >= 0) return false;
-            if (ordinals.indexOf(token) >= 0) return false;
-            return numbers.indexOf(token) < 0;
-        }
-
-        return !tokens.every(testToken);
-    } catch (error) {
-        return false;
-    }
-}
-
-/**
- * Create a pattern of symbols that represents the input string.
- * @param {*} inputString - The input string to be analyzed.
- * @returns - Returns an array of symbols that represent the input string.
+ * Crea un patrón de símbolos basado en la entrada del usuario.
  */
 export default function createPattern(inputString: string): string[] {
     let pattern: string[] = [];
+
     try {
-        if (detectNumbers(inputString)) {
+        // Detectar números en la consulta
+        if (/\d+/.test(inputString)) {
             pattern.push("number");
         }
 
         const tokenizer = new natural.WordTokenizer();
-        let tokens: string[] = tokenizer.tokenize(inputString.toLowerCase()) ?? [];
+        const tokens: string[] = tokenizer.tokenize(inputString.toLowerCase()) || [];
 
-        Object.keys(SYMBOLS).forEach(key => {
+        Object.keys(SYMBOLS).forEach((key) => {
             if (SYMBOLS[key].some(symbol =>
                 tokens.some(word => natural.LevenshteinDistance(symbol, word) <= 1)
             )) {
@@ -83,13 +46,18 @@ export default function createPattern(inputString: string): string[] {
             }
         });
 
+        // Si se encuentra un identificador de zona o franja, agregar "zone" o "strips"
+        if (pattern.includes("zone_identifier") || pattern.includes("zone_name")) {
+            pattern.push("zone");
+        }
+        if (pattern.includes("strip_identifier")) {
+            pattern.push("strips");
+        }
+
     } catch (error) {
-        console.error('Error en createPattern:', error);
-        console.log('Error en la función principal del módulo "create_pattern.js"')
-        console.log('No se pudo crear un patron para el string de entrada.')
+        console.error("Error en createPattern:", error);
     }
+
+    console.log("Patrón creado:", pattern);
     return pattern;
-};
-
-
-
+}
