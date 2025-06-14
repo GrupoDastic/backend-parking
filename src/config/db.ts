@@ -15,12 +15,3 @@ export const pool = new Pool({
     }
 });
 
-export async function testDatabaseConnection() {
-    try {
-        const client = await pool.connect();
-        console.log("✅ Connected to the database successfully!");
-        client.release();
-    } catch (error) {
-        console.error("❌ Error connecting to the database:", error);
-    }
-}
