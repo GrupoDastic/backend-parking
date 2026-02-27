@@ -1,5 +1,11 @@
 import { Router } from "express";
-import { getAllZones, getStripsByZone, getParkingSpacesByStrip, getStripMap } from "../services/zoneService";
+import {
+    getAllZones,
+    getStripsByZone,
+    getParkingSpacesByStrip,
+    getStripMap,
+    assignParkingSpace, cancelReservation, confirmReservation, createReservation
+} from "../services/zoneService";
 import { handleError, validateParams } from "../utils/helpers";
 
 const router = Router();
@@ -51,3 +57,65 @@ router.get("/zones/:zoneId/strips/:stripIdentifier/map", validateParams(["zoneId
 });
 
 export default router;
+
+router.post(
+    "/zones/:zoneId/strips/:stripIdentifier/assign",
+    validateParams(["zoneId", "stripIdentifier"]),
+    async (req, res) => {
+        try {
+            const { zoneId, stripIdentifier } = req.params;
+
+            const space = await assignParkingSpace(zoneId, stripIdentifier);
+
+            res.json({
+                message: "Espacio asignado correctamente",
+                parking_space: space,
+            });
+        } catch (error) {
+            handleError(res, error);
+        }
+    }
+);
+
+router.post(
+    "/zones/:zoneId/strips/:stripIdentifier/reserve",
+    validateParams(["zoneId", "stripIdentifier"]),
+    async (req, res) => {
+        try {
+            const { zoneId, stripIdentifier } = req.params;
+            const { spaceId } = req.body;
+
+            const reservation = await createReservation(
+                zoneId,
+                stripIdentifier,
+                spaceId
+            );
+
+            res.json({ success: true, ...reservation });
+        } catch (error) {
+            handleError(res, error);
+        }
+    }
+);
+
+router.post("/zones/:zoneId/strips/:stripIdentifier/confirm", validateParams(["zoneId", "stripIdentifier"]), async (req, res) => {
+    try {
+        const { zoneId, stripIdentifier } = req.params;
+        const { token } = req.body;
+        const space = await confirmReservation(zoneId, stripIdentifier, token);
+        res.json({ success: true, parking_space: space });
+    } catch (error) {
+        handleError(res, error);
+    }
+});
+
+router.post("/zones/:zoneId/strips/:stripIdentifier/cancel", validateParams(["zoneId", "stripIdentifier"]), async (req, res) => {
+    try {
+        const { zoneId, stripIdentifier } = req.params;
+        const { token } = req.body;
+        const space = await cancelReservation(zoneId, stripIdentifier, token);
+        res.json({ success: true, parking_space: space });
+    } catch (error) {
+        handleError(res, error);
+    }
+});

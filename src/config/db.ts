@@ -12,3 +12,4 @@ export const pool = new Pool({
     password: String(process.env.POSTGRES_PASSWORD),
 });
 
+
